@@ -1,3 +1,7 @@
+-- made by samet (joestar._3 on discord)
+-- https://discord.gg/VhvTd5HV8d
+-- example at bottom
+
 if getgenv().Library then
     getgenv().Library:Unload()
 end
@@ -50,7 +54,7 @@ local Library do
     Library = {
         Theme =  { },
 
-        MenuKeybind = tostring(Enum.KeyCode.LeftControl), 
+        MenuKeybind = tostring(Enum.KeyCode.LeftAlt), 
 
         Flags = { },
 
@@ -63,10 +67,10 @@ local Library do
         FadeSpeed = 0.2,
 
         Folders = {
-            Directory = "esdeeeeee",
-            Configs = "esdeeeeee/Configs",
-            Assets = "esdeeeeee/Assets",
-            Fonts = "esdeeeeee/Fonts",
+            Directory = "NilWare",
+            Configs = "NilWare/Configs",
+            Assets = "NilWare/Assets",
+            Fonts = "NilWare/Fonts",
         },
 
         -- Ignore below
@@ -719,6 +723,12 @@ local Library do
                 end
             end
         end)
+
+        if Success and Library.Flags["VisualSkyboxPreset"] and _G.ApplyVisualSkyboxPreset then
+            Library:SafeCall(function()
+                _G.ApplyVisualSkyboxPreset(Library.Flags["VisualSkyboxPreset"])
+            end)
+        end
 
         return Success, Result
     end
