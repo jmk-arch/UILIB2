@@ -1,7 +1,3 @@
--- made by samet (joestar._3 on discord)
--- https://discord.gg/VhvTd5HV8d
--- example at bottom
-
 if getgenv().Library then
     getgenv().Library:Unload()
 end
@@ -67,10 +63,10 @@ local Library do
         FadeSpeed = 0.2,
 
         Folders = {
-            Directory = "NilWare",
-            Configs = "NilWare/Configs",
-            Assets = "NilWare/Assets",
-            Fonts = "NilWare/Fonts",
+            Directory = "Nilware",
+            Configs = "Nilware/Configs",
+            Assets = "Nilware/Assets",
+            Fonts = "Nilware/Fonts",
         },
 
         -- Ignore below
@@ -723,12 +719,6 @@ local Library do
                 end
             end
         end)
-
-        if Success and Library.Flags["VisualSkyboxPreset"] and _G.ApplyVisualSkyboxPreset then
-            Library:SafeCall(function()
-                _G.ApplyVisualSkyboxPreset(Library.Flags["VisualSkyboxPreset"])
-            end)
-        end
 
         return Success, Result
     end
@@ -3071,7 +3061,14 @@ local Library do
                 Library.Flags[Slider.Flag] = Slider.Value
 
                 Items["Accent"]:Tween(TweenInfo.new(0.35, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2New((Slider.Value - Slider.Min) / (Slider.Max - Slider.Min), -2, 1, 0)})
-                Items["Value"].Instance.Text = StringFormat("%s%s", Slider.Value, Slider.Suffix)
+                local ValueText = Slider.Value
+                if Slider.Decimals and Slider.Decimals < 1 then
+                    local DecimalText = tostring(Slider.Decimals)
+                    local DotPosition = string.find(DecimalText, "%.", 1, true)
+                    local DecimalPlaces = DotPosition and (#DecimalText - DotPosition) or 0
+                    ValueText = StringFormat("%." .. DecimalPlaces .. "f", Slider.Value)
+                end
+                Items["Value"].Instance.Text = StringFormat("%s%s", ValueText, Slider.Suffix)
 
                 if Slider.Callback then
                     Library:SafeCall(Slider.Callback, Slider.Value)
@@ -4047,4 +4044,6 @@ local Library = loadstring(readfile("LibraryLoad.lua"))()
 local Window = Library:Window({Name = "My UI"})
 Library:CreateSettingsPage(Window)
 
+If you are loading from another file:
+local Library = loadstring(readfile("C:/Users/joine/OneDrive/바탕 화면/한국머더/LibraryLoad.lua"))()
 --]]
