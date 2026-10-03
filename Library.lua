@@ -2657,7 +2657,8 @@ local Library do
                 Default = Data.Default or Data.default or false,
                 Callback = Data.Callback or Data.callback or function() end,
 
-                Value = false
+                Value = false,
+                Colorpickers = {}
             }
 
             local Items = { } do 
@@ -2773,6 +2774,19 @@ local Library do
                 })                
             end
 
+            -- Reserve the right side for inline color buttons/keybinds, including
+            -- when the window is resized or an attached control is hidden.
+            local function UpdateTextWidth()
+                local Reserved = 25 + Items["SubElements"].Instance.AbsoluteSize.X
+                Items["Text"].Instance.AutomaticSize = Enum.AutomaticSize.None
+                Items["Text"].Instance.Size = UDim2New(1, -Reserved - 6, 0, 15)
+                Items["Text"].Instance.TextXAlignment = Enum.TextXAlignment.Left
+                Items["Text"].Instance.TextTruncate = Enum.TextTruncate.AtEnd
+            end
+            Library:Connect(Items["SubElements"].Instance:GetPropertyChangedSignal("AbsoluteSize"), UpdateTextWidth)
+            UpdateTextWidth()
+            Toggle.Items = Items
+
             function Toggle:Get()
                 return Toggle.Value 
             end
@@ -2822,8 +2836,12 @@ local Library do
                     Callback = Colorpicker.Callback
                 })
 
+                TableInsert(Toggle.Colorpickers, NewColorpicker)
                 return NewColorpicker
             end
+
+            Toggle.ColorPicker = Toggle.Colorpicker
+            Toggle.AddColorPicker = Toggle.Colorpicker
 
             function Toggle:Keybind(Data)
                 Data = Data or { }
@@ -2853,6 +2871,9 @@ local Library do
             end
 
             Items["Toggle"]:Connect("MouseButton1Down", function()
+                if Items["SubElements"].Instance.AbsoluteSize.X > 0 and Library:IsMouseOverFrame(Items["SubElements"]) then
+                    return
+                end
                 Toggle:Set(not Toggle.Value)
             end)
 
@@ -2860,6 +2881,11 @@ local Library do
 
             Library.SetFlags[Toggle.Flag] = function(Value)
                 Toggle:Set(Value)
+            end
+
+            -- A single row can declare multiple independent color flags.
+            for _, ColorData in ipairs(Data.Colorpickers or Data.ColorPickers or {}) do
+                Toggle:Colorpicker(ColorData)
             end
 
             return Toggle 
